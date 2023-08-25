@@ -17,16 +17,92 @@ app.get('/scrape', async (req, res) => {
     const conpany = $('.company').text();
     const rank = $('.rank').text();
     const title = $('.title-news').text();
-    const itemsWithTitles = []
+    const status = []
     $('[title]').each((index, element) => {
       const title = $(element).attr('title');
-      itemsWithTitles.push(title);
+      status.push(title);
     });
-    //  rank: $('.rank').text(),
-    //  year: $('.year').text(),
+    const content = $('.list-lander-p');
+    let contentElement;
+    if (content.length > 0) {
+      contentElement = content.text();
+    }else {
+      contentElement = $('.IntroQuote-module_introQuote__oeqmW').text();
+    }
 
 
-    res.send({conpany , rank ,title  , itemsWithTitles});
+    const info = [];
+    $('h1').each((index , element) => {
+      const infoTitle = $(element).text();
+      info.push(infoTitle);
+    })
+
+    // const divIf = [];
+    // $('div').each((index , element) => {
+    //   const divinfomation = $(element).text();
+    //   divIf.push(divinfomation);
+    // })
+
+    const infoObject = [];
+    $('li').each((index , element) => {
+      const infoObjectDoc = $(element).text();
+      infoObject.push(infoObjectDoc);
+    })
+    
+    const externalLinks = $('a').map(function() {
+      return $(this).attr('href');
+    }).get();
+
+
+    const imageexternalLinks = $('img').map(function() {
+      return $(this).attr('src');
+    }).get();
+
+
+
+    const responseData = {}
+
+    // if (divIf) {
+    //   responseData.divIf = divIf;
+    // }
+
+    if (imageexternalLinks) {
+      responseData.imageexternalLinks = imageexternalLinks;
+    }
+
+    if (conpany) {
+      responseData.conpany = conpany;
+    }
+    if (rank) {
+      responseData.rank = rank;
+    }
+    if (title) {
+      responseData.title = title;
+    }
+    if (status) {
+      responseData.status = status;
+    }
+    if (contentElement) {
+      responseData.contentElement = contentElement;
+    }
+    if (info) {
+      responseData.info = info;
+    }
+    if (infoObject) {
+      responseData.infoObject = infoObject;
+    }
+    if (externalLinks) {
+      responseData.externalLinks = externalLinks;
+    }
+   
+    
+
+    if(Object.keys(responseData).length > 0) {
+      res.send({responseData });
+    } else {
+      res.send("không có dữ liệu hiển thị");
+    }
+
     // res.send({rank})
   } catch (error) {
     console.error('Scraping error:', error);
