@@ -18,5 +18,8 @@
     "pkg": "^5.8.1",
     "puppeteer": "^21.1.0",
     "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
