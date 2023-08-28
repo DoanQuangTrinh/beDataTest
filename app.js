@@ -5,23 +5,33 @@ const cheerio = require('cheerio');
 
 const app = express();
 const port = 5000;
+app.use(express.json());
 
 app.use(cors());
 
 app.get('/scrape', async (req, res) => {
   try {
     const url = req.query.url;
-    const selector = req.query.selector;
-
+    const type = req.query.type; // Loại chọn phần tử (class hoặc id)
+    const identifier = req.query.identifier; // Tên lớp hoặc ID
     const response = await axios.get(url);
     const $ = cheerio.load(response.data);
-    console.log(selector);
 
     const data = [];
-    $(selector).each((index, element) => {
-      const text = $(element).text();
+
+    if (type === 'class') {
+      $(`.${identifier}`).each((index, element) => {
+        const text = $(element).text();
+        data.push(text);
+      });
+    } else if (type === 'id') {
+      const element = $(`#${identifier}`);
+      const text = element.text();
       data.push(text);
-    });
+    } else {
+      res.status(400).json({ error: 'Invalid type specified' });
+      return;
+    }
 
     if (data.length > 0) {
       res.send({ data });
